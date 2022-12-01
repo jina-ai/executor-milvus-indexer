@@ -54,7 +54,7 @@ def test_filtering(docker_compose):
         uses_with={
             'collection_name': 'test3',
             'n_dim': n_dim,
-            'columns': {'price', 'float'},
+            'columns': {'price': 'float'},
         },
     )
 
