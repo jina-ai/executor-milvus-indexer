@@ -44,7 +44,7 @@ class MilvusIndexer(Executor):
                 'consistency_level': consistency_level,
                 'batch_size': batch_size,
                 'columns': columns,
-                'list_like': True,
+                'list_like': False,
             },
         )
 
@@ -55,7 +55,8 @@ class MilvusIndexer(Executor):
         """Index new documents
         :param docs: the Documents to index
         """
-        self._index.extend(docs)
+        with self._index:
+            self._index.extend(docs)
 
     @requests(on='/search')
     def search(
