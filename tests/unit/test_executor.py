@@ -154,13 +154,13 @@ def test_search_with_match_args(docs, limit, docker_compose):
     indexer = MilvusIndexer(
         collection_name='test11',
         columns=[('price', 'float')],
-        match_args={'filter': f'price <= {2.0}', 'limit': 1},
+        match_args={'filter': f'price <= {2.5}', 'limit': limit},
     )
     indexer.index(docs)
 
     indexer.search(query)
-    assert len(query[0].matches) == 1
-    assert query[0].matches[0].tags['price'] == 0.4
+    assert len(query[0].matches) == limit
+    assert query[0].matches[-1].tags['price'] == 2.0
 
 
 def test_clear(docs, docker_compose):
