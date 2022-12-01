@@ -6,7 +6,7 @@ from jina import Flow
 from executor import MilvusIndexer
 
 
-def test_flow():  # docker_compose):
+def test_flow(docker_compose):
     f = Flow().add(
         uses=MilvusIndexer,
         uses_with={'collection_name': 'test1', 'n_dim': 2},
@@ -30,7 +30,7 @@ def test_flow():  # docker_compose):
         assert docs[0].matches[0].id == 'b'
 
 
-def test_reload_keep_state():  # docker_compose):
+def test_reload_keep_state(docker_compose):
     docs = DocumentArray([Document(embedding=np.random.rand(3)) for _ in range(2)])
     f = Flow().add(
         uses=MilvusIndexer,
@@ -46,7 +46,7 @@ def test_reload_keep_state():  # docker_compose):
         assert len(first_search[0].matches) == len(second_search[0].matches)
 
 
-def test_filtering():  # docker_compose):
+def test_filtering(docker_compose):
     n_dim = 3
 
     f = Flow().add(
@@ -54,7 +54,7 @@ def test_filtering():  # docker_compose):
         uses_with={
             'collection_name': 'test3',
             'n_dim': n_dim,
-            'columns': [('price', 'float')],
+            'columns': {'price', 'float'},
         },
     )
 
@@ -69,15 +69,8 @@ def test_filtering():  # docker_compose):
 
         for threshold in [10, 20, 30]:
 
-            filter_ = {'must': [{'key': 'price', 'range': {operator: threshold}}]}
+            filter_ = f'price <= {threshold}'
             doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
             indexed_docs = f.search(doc_query, parameters={'filter': filter_})
 
             assert len(indexed_docs[0].matches) > 0
-
-            assert all(
-                [
-                    numeric_operators_qdrant[operator](r.tags['price'], threshold)
-                    for r in indexed_docs[0].matches
-                ]
-            )
