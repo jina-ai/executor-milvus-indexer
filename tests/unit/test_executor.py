@@ -133,7 +133,9 @@ def test_search(metric, docs, docker_compose):
 @pytest.mark.parametrize('limit', [1, 2, 3])
 def test_search_with_match_args(docs, limit, docker_compose):
     indexer = MilvusIndexer(
-        collection_name='test10', distance='L2', match_args={'limit': limit}
+        collection_name='test10',
+        distance='L2',
+        match_args={'limit': limit}
     )
     indexer.index(docs)
     assert 'limit' in indexer._match_args.keys()
@@ -157,10 +159,11 @@ def test_search_with_match_args(docs, limit, docker_compose):
         match_args={'filter': f'price <= {2.5}', 'limit': limit},
     )
     indexer.index(docs)
-
     indexer.search(query)
+    
     assert len(query[0].matches) == limit
-    assert query[0].matches[-1].tags['price'] == 2.0
+    for match in query[0].matches:
+        assert match.tags['price'] <= 2.5
 
 
 def test_clear(docs, docker_compose):
