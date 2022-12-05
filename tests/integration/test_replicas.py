@@ -60,10 +60,10 @@ def test_replicas_reindex(docker_compose):
     )
 
     docs_index = [
-        Document(id=f'd{i}', embedding=np.random.random(n_dim)) for i in range(1000)
+        Document(id=f'd{i}', embedding=np.random.random(n_dim)) for i in range(10)
     ]
 
-    docs_query = docs_index[:100]
+    docs_query = docs_index[:4]
 
     with f:
         f.post(on='/index', inputs=docs_index, request_size=1)
