@@ -74,16 +74,16 @@ class MilvusIndexer(Executor):
         :param kwargs: additional kwargs for the endpoint
 
         """
+        with self._index:
+            if parameters is None:
+                parameters = {}
 
-        if parameters is None:
-            parameters = {}
-
-        match_args = (
-            {**self._match_args, **parameters}
-            if parameters is not None
-            else self._match_args
-        )
-        docs.match(self._index, **match_args)
+            match_args = (
+                {**self._match_args, **parameters}
+                if parameters is not None
+                else self._match_args
+            )
+            docs.match(self._index, **match_args)
 
     @requests(on='/delete')
     def delete(self, parameters: Dict, **kwargs):
