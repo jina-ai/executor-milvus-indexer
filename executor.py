@@ -24,6 +24,7 @@ class MilvusIndexer(Executor):
         batch_size: int = -1,
         columns: Optional[Union[List[Tuple[str, str]], Dict[str, str]]] = None,
         match_args: Optional[Dict] = None,
+        root_id: bool = True,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -45,6 +46,7 @@ class MilvusIndexer(Executor):
                 'batch_size': batch_size,
                 'columns': columns,
                 'list_like': False,
+                'root_id': root_id,
             },
         )
 
