@@ -9,7 +9,7 @@ from executor import MilvusIndexer
 def test_flow(docker_compose):
     f = Flow().add(
         uses=MilvusIndexer,
-        uses_with={'collection_name': 'test1', 'n_dim': 2},
+        uses_with={'n_dim': 2},
     )
 
     with f:
@@ -34,7 +34,7 @@ def test_reload_keep_state(docker_compose):
     docs = DocumentArray([Document(embedding=np.random.rand(3)) for _ in range(2)])
     f = Flow().add(
         uses=MilvusIndexer,
-        uses_with={'collection_name': 'test2', 'n_dim': 3},
+        uses_with={'n_dim': 3},
     )
 
     with f:
@@ -52,7 +52,6 @@ def test_filtering(docker_compose):
     f = Flow().add(
         uses=MilvusIndexer,
         uses_with={
-            'collection_name': 'test3',
             'n_dim': n_dim,
             'columns': {'price': 'float'},
         },
@@ -69,8 +68,7 @@ def test_filtering(docker_compose):
 
         for threshold in [10, 20, 30]:
 
-            filter_ = f'price <= {threshold}'
             doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
-            indexed_docs = f.search(doc_query, parameters={'filter': filter_})
+            indexed_docs = f.search(doc_query, parameters={'filter': f'price <= {threshold}'})
 
             assert len(indexed_docs[0].matches) > 0

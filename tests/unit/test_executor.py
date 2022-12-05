@@ -50,14 +50,14 @@ def test_init(docker_compose):
 
 
 def test_index(docs, docker_compose):
-    indexer = MilvusIndexer(collection_name='test2')
+    indexer = MilvusIndexer()
     indexer.index(docs)
 
     assert len(indexer._index) == len(docs)
 
 
 def test_delete(docs, docker_compose):
-    indexer = MilvusIndexer(collection_name='test3')
+    indexer = MilvusIndexer()
     indexer.index(docs)
 
     ids = ['doc1', 'doc2', 'doc3']
@@ -69,7 +69,7 @@ def test_delete(docs, docker_compose):
 
 def test_update(docs, update_docs, docker_compose):
     # index docs first
-    indexer = MilvusIndexer(collection_name='test3')
+    indexer = MilvusIndexer()
     indexer.index(docs)
     assert_document_arrays_equal(indexer._index, docs)
 
@@ -79,7 +79,7 @@ def test_update(docs, update_docs, docker_compose):
 
 
 def test_fill_embeddings(docker_compose):
-    indexer = MilvusIndexer(collection_name='test4', distance='L2', n_dim=1)
+    indexer = MilvusIndexer(distance='L2', n_dim=1)
 
     indexer.index(DocumentArray([Document(id='a', embedding=np.array([1]))]))
     search_docs = DocumentArray([Document(id='a')])
@@ -93,9 +93,7 @@ def test_fill_embeddings(docker_compose):
 
 def test_filter(docker_compose):
     n_dim = 3
-    indexer = MilvusIndexer(
-        collection_name='test5', n_dim=n_dim, columns=[('price', 'float')]
-    )
+    indexer = MilvusIndexer(n_dim=n_dim, columns={'price': 'float'})
 
     docs = DocumentArray([Document(id=f'doc{i}', tags={'price': i}) for i in range(10)])
     indexer.index(docs)
@@ -110,16 +108,18 @@ def test_filter(docker_compose):
 
 
 def test_persistence(docs, docker_compose):
-    indexer1 = MilvusIndexer(collection_name='test8', distance='L2', n_dim=128)
+    name = 'test_persistence'
+    indexer1 = MilvusIndexer(collection_name=name, distance='L2', n_dim=128)
     indexer1.index(docs)
-    indexer2 = MilvusIndexer(collection_name='test8', distance='L2', n_dim=128)
+    indexer2 = MilvusIndexer(collection_name=name, distance='L2', n_dim=128)
+
     assert_document_arrays_equal(indexer2._index, docs)
 
 
 @pytest.mark.parametrize('metric', ['IP', 'L2'])
 def test_search(metric, docs, docker_compose):
     # test general/normal case
-    indexer = MilvusIndexer(collection_name='test9hdaouishd', distance='L2', n_dim=128)
+    indexer = MilvusIndexer(distance='L2', n_dim=128)
     indexer.index(docs)
     query = DocumentArray([Document(embedding=np.random.rand(128)) for _ in range(10)])
     indexer.search(query)
@@ -133,7 +133,6 @@ def test_search(metric, docs, docker_compose):
 @pytest.mark.parametrize('limit', [1, 2, 3])
 def test_search_with_match_args(docs, limit, docker_compose):
     indexer = MilvusIndexer(
-        collection_name='test10',
         distance='L2',
         match_args={'limit': limit}
     )
@@ -154,20 +153,19 @@ def test_search_with_match_args(docs, limit, docker_compose):
     docs[5].tags['price'] = 4.6
 
     indexer = MilvusIndexer(
-        collection_name='test11',
-        columns=[('price', 'float')],
+        columns={'price': 'float'},
         match_args={'filter': f'price <= {2.5}', 'limit': limit},
     )
     indexer.index(docs)
     indexer.search(query)
-    
+
     assert len(query[0].matches) == limit
     for match in query[0].matches:
         assert match.tags['price'] <= 2.5
 
 
 def test_clear(docs, docker_compose):
-    indexer = MilvusIndexer(collection_name='test12')
+    indexer = MilvusIndexer()
     indexer.index(docs)
     assert len(indexer._index) == 6
     indexer.clear()
@@ -176,9 +174,7 @@ def test_clear(docs, docker_compose):
 
 def test_columns(docker_compose):
     n_dim = 3
-    indexer = MilvusIndexer(
-        collection_name='test13', n_dim=n_dim, columns=[('price', 'float')]
-    )
+    indexer = MilvusIndexer(n_dim=n_dim, columns={'price': 'float'})
     docs = DocumentArray(
         [
             Document(id=f'r{i}', embedding=i * np.ones(n_dim), tags={'price': i})
