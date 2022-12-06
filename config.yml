@@ -1,0 +1,10 @@
+jtype: MilvusIndexer
+py_modules:
+  - executor.py
+metas:
+  name: MilvusIndexer
+  description:
+  url:
+  keywords: []
+
+

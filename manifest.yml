@@ -1,0 +1,5 @@
+manifest_version: 1
+name: MilvusIndexer
+description: MilvusIndexer indexes Documents in a Milvus server using DocumentArray with `storage='milvus'`
+url: https://github.com/jina-ai/executor-milvus-indexer
+keywords: ['indexer', 'milvus', 'ann', 'similarity_search', 'database']
