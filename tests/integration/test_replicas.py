@@ -5,7 +5,7 @@ from jina import Flow
 
 
 def test_replicas(docker_compose):
-    n_dim = 2
+    n_dim = 1
     name = 'test_replicas'
 
     f = Flow().add(
@@ -17,10 +17,10 @@ def test_replicas(docker_compose):
     )
 
     docs_index = [
-        Document(id=str(i), embedding=np.random.random(n_dim)) for i in range(10)
+        Document(id=str(i), embedding=np.random.random(n_dim)) for i in range(4)
     ]
 
-    docs_query = docs_index[:4]
+    docs_query = docs_index[:2]
 
     with f:
         f.post(on='/index', inputs=docs_index, request_size=1)
@@ -33,7 +33,7 @@ def test_replicas(docker_compose):
     f_with_replicas = Flow().add(
         uses=MilvusIndexer,
         uses_with={'collection_name': name, 'n_dim': n_dim},
-        replicas=4,
+        replicas=2,
     )
 
     with f_with_replicas:
@@ -47,7 +47,7 @@ def test_replicas(docker_compose):
 
 def test_replicas_reindex(docker_compose):
     n_dim = 1
-    name = 'test_reindex22d1dshhbjk.\dhjsksqa'
+    name = 'test_reindex22d1dshhbjklhjsksqa'
 
     f = Flow().add(
         uses=MilvusIndexer,
@@ -58,10 +58,10 @@ def test_replicas_reindex(docker_compose):
     )
 
     docs_index = [
-        Document(id=f'd{i}', embedding=np.random.random(n_dim)) for i in range(6)
+        Document(id=f'd{i}', embedding=np.random.random(n_dim)) for i in range(4)
     ]
 
-    docs_query = docs_index[:4]
+    docs_query = docs_index[:2]
 
     with f:
         f.post(on='/index', inputs=docs_index, request_size=1)
@@ -74,7 +74,7 @@ def test_replicas_reindex(docker_compose):
     f_with_replicas = Flow().add(
         uses=MilvusIndexer,
         uses_with={'collection_name': name, 'n_dim': n_dim},
-        replicas=4,
+        replicas=2,
     )
 
     with f_with_replicas:
