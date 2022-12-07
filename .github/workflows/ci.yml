@@ -3,22 +3,7 @@ name: CI
 on: [pull_request]
 
 jobs:
-  prep-testbed:
-    runs-on: ubuntu-latest
-    needs: [ lint-flake-8, check-black, import-test ]
-    steps:
-      - uses: actions/checkout@v2.5.0
-      - id: set-matrix
-        run: |
-          sudo apt-get install jq
-          export value=$(bash scripts/get-all-test-paths.sh)
-          echo "matrix=$value" >> $GITHUB_OUTPUT
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-      matrix-oldproto: ${{ steps.set-matrix.outputs.matrix-oldproto }}
-
   tests:
-    needs: prep-testbed
     strategy:
       matrix:
         test-path: [ 'tests/unit/test_executor.py', 'tests/integration/test_flow.py', 'tests/integration/test_integration.py', 'tests/integration/test_reload.py', 'tests/integration/test_replicas.py', 'tests/integration/test_replicas_reindex.py' ]
