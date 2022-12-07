@@ -55,5 +55,6 @@ def _wait_for_milvus(restart_on_failure=True):
 
 @pytest.fixture(autouse=True)
 def test_grpc_fork_support_false(monkeypatch):
+    print('GRPC ENABLE FORK SUPPORT')
     monkeypatch.setenv('GRPC_ENABLE_FORK_SUPPORT', 'false')
 
