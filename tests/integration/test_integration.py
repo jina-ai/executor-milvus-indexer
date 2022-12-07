@@ -6,6 +6,8 @@ from docarray import Document, DocumentArray
 from jina import Client, Flow
 
 from executor import MilvusIndexer
+import os
+os.environ['GRPC_ENABLE_FORK_SUPPORT'] = 'false'
 
 
 def _send_request(gateway_port, protocol):
@@ -44,6 +46,7 @@ def _create_flow():
 
 
 def test_flow(docker_compose):
+    os.environ['GRPC_ENABLE_FORK_SUPPORT'] = 'false'
     p = multiprocessing.Process(target=_create_flow)
     p.start()
     p.join()
