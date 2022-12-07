@@ -3,5 +3,59 @@ name: CI
 on: [pull_request]
 
 jobs:
-  call-external:
-    uses: jina-ai/workflows-executors/.github/workflows/ci.yml@master
+  prep-testbed:
+    runs-on: ubuntu-latest
+    needs: [ lint-flake-8, check-black, import-test ]
+    steps:
+      - uses: actions/checkout@v2.5.0
+      - id: set-matrix
+        run: |
+          sudo apt-get install jq
+          export value=$(bash scripts/get-all-test-paths.sh)
+          echo "matrix=$value" >> $GITHUB_OUTPUT
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix-oldproto: ${{ steps.set-matrix.outputs.matrix-oldproto }}
+
+  tests:
+    needs: prep-testbed
+    strategy:
+      matrix:
+        test-path: [ 'tests/unit/test_executor.py', 'tests/integration/test_flow.py', 'tests/integration/test_integration.py', 'tests/integration/test_reload.py', 'tests/integration/test_replicas.py', 'tests/integration/test_replicas_reindex.py' ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.7"
+      - name: Pre-test script
+        run: |
+          if [[ -f "tests/pre_test.sh" ]]; then
+            bash tests/pre_test.sh; fi
+      - name: Install latest stable 3.x jina version
+        run: |
+          pip install jina
+      - name: Python requirements
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt ; fi
+          if [ -f tests/requirements.txt ]; then
+            pip install -r tests/requirements.txt ; fi
+      - name: Create Dockerfile, if needed
+        run: |
+          if [[ ! -f "Dockerfile" ]]; then
+            docker run --entrypoint="executor_manager" -v "$(pwd):/workspace" \
+            jinahub/hubble-normalizer:latest normalize . --jina-version=3
+            sudo chown -R $(id -u ${USER}):$(id -g ${USER}) . ; fi
+      - name: Run unit tests
+        run: |
+          python -m pytest -s -v -m "not gpu" ${{ matrix.test-path }}
+      - id: test_docker
+        name: run docker tests
+        uses: jina-ai/action-hubble-test-docker@v5
+      - run: echo test result ${{ steps.test_docker.outputs.exit_code}}
+        shell: bash
