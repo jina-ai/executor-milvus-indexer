@@ -8,23 +8,23 @@ from jina import Client, Flow
 from executor import MilvusIndexer
 
 
-def _send_request(gateway_port, protocol):
-    c = Client(host='localhost', port=gateway_port, protocol=protocol)
-    c.post(
-        on='/index',
-        inputs=[
-            Document(id='a', embedding=np.array([1, 3])),
-            Document(id='b', embedding=np.array([1, 1])),
-            Document(id='c', embedding=np.array([3, 1])),
-            Document(id='d', embedding=np.array([2, 3])),
-        ],
-    )
-
-    res_search = c.post(
-        on='/search',
-        inputs=[Document(embedding=np.array([1, 1]))],
-    )
-    assert res_search[0].matches[0].id == 'b'
+# def _send_request(gateway_port, protocol):
+#     c = Client(host='localhost', port=gateway_port, protocol=protocol)
+#     c.post(
+#         on='/index',
+#         inputs=[
+#             Document(id='a', embedding=np.array([1, 3])),
+#             Document(id='b', embedding=np.array([1, 1])),
+#             Document(id='c', embedding=np.array([3, 1])),
+#             Document(id='d', embedding=np.array([2, 3])),
+#         ],
+#     )
+#
+#     res_search = c.post(
+#         on='/search',
+#         inputs=[Document(embedding=np.array([1, 1]))],
+#     )
+#     assert res_search[0].matches[0].id == 'b'
 
 
 def test_flow(docker_compose):
@@ -34,13 +34,28 @@ def test_flow(docker_compose):
     )
 
     with f:
-        p = multiprocessing.Process(
-            target=_send_request, args=(f.port, 'grpc')
+        f.post(
+            on='/index',
+            inputs=[
+                Document(id='a', embedding=np.array([1, 3])),
+                Document(id='b', embedding=np.array([1, 1])),
+                Document(id='c', embedding=np.array([3, 1])),
+                Document(id='d', embedding=np.array([2, 3])),
+            ],
         )
-        p.start()
-        p.join()
 
-        assert p.exitcode == 0
+        docs = f.post(
+            on='/search',
+            inputs=[Document(embedding=np.array([1, 1]))],
+        )
+        assert docs[0].matches[0].id == 'b'
+        # p = multiprocessing.Process(
+        #     target=_send_request, args=(f.port, 'grpc')
+        # )
+        # p.start()
+        # p.join()
+        #
+        # assert p.exitcode == 0
 
 
 def test_reload_keep_state(docker_compose):
