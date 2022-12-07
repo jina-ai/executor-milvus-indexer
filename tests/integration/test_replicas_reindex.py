@@ -4,9 +4,9 @@ from executor import MilvusIndexer
 from jina import Flow
 
 
-def test_replicas(docker_compose):
+def test_replicas_reindex(docker_compose):
     n_dim = 1
-    name = 'test_replicas'
+    name = 'test_reindex22d1dshhbjklhjsksqa'
 
     f = Flow().add(
         uses=MilvusIndexer,
@@ -17,7 +17,7 @@ def test_replicas(docker_compose):
     )
 
     docs_index = [
-        Document(id=str(i), embedding=np.random.random(n_dim)) for i in range(4)
+        Document(id=f'd{i}', embedding=np.random.random(n_dim)) for i in range(4)
     ]
 
     docs_query = docs_index[:2]
@@ -37,10 +37,12 @@ def test_replicas(docker_compose):
     )
 
     with f_with_replicas:
+        f_with_replicas.post(on='/index', inputs=docs_index, request_size=1)
+
+        docs_with_replicas = f_with_replicas.post(on='/search', inputs=docs_query, request_size=1)
         docs_with_replicas = sorted(
-            f_with_replicas.post(on='/search', inputs=docs_query, request_size=1),
+            docs_with_replicas,
             key=lambda doc: doc.id,
         )
 
     assert docs_without_replicas == docs_with_replicas
-
