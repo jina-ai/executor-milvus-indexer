@@ -7,6 +7,33 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 compose_yml = os.path.abspath(os.path.join(cur_dir, 'docker-compose.yml'))
 
 
+@pytest.fixture(autouse=True)
+def test_log_level(monkeypatch):
+    monkeypatch.setenv('JINA_LOG_LEVEL', 'DEBUG')
+
+
+@pytest.fixture(autouse=True)
+def test_grpc_fork_support_false(monkeypatch):
+    monkeypatch.setenv('GRPC_ENABLE_FORK_SUPPORT', 'false')
+
+
+@pytest.fixture(autouse=True)
+def test_timeout_ctrl_time(monkeypatch):
+    monkeypatch.setenv('JINA_DEFAULT_TIMEOUT_CTRL', '500')
+
+
+@pytest.fixture(autouse=True)
+def test_disable_telemetry(monkeypatch):
+    monkeypatch.setenv('JINA_OPTOUT_TELEMETRY', 'True')
+
+
+@pytest.fixture(autouse=True)
+def tmpfile(tmpdir):
+    import tempfile
+    tmpfile = f'jina_test_{next(tempfile._get_candidate_names())}.db'
+    return tmpdir / tmpfile
+
+
 @pytest.fixture(scope='module')
 def docker_compose():
     os.system(
@@ -51,11 +78,3 @@ def _wait_for_milvus(restart_on_failure=True):
             restart_milvus()
         else:
             raise e
-
-
-@pytest.fixture(autouse=True)
-def test_grpc_fork_support_false(monkeypatch):
-    print('start GRPC DISABLE FORK SUPPORT')
-    monkeypatch.setenv('GRPC_ENABLE_FORK_SUPPORT', 'false')
-    print('end GRPC DISABLE FORK SUPPORT')
-
