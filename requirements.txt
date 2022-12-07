@@ -1,2 +1,2 @@
 git+https://github.com/docarray/docarray.git@fix-milvus-indexer-main-version#egg=docarray[milvus]
-jina>=3.11.2
+git+https://github.com/jina-ai/jina.git@master
