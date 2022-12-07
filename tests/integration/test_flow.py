@@ -7,8 +7,7 @@ from jina import Client, Flow
 from executor import MilvusIndexer
 
 
-
-def test_flow_2(docker_compose):
+def test_flow(docker_compose):
     f = Flow().add(
         uses=MilvusIndexer,
         uses_with={'n_dim': 2},

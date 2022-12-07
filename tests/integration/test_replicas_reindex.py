@@ -6,7 +6,7 @@ from jina import Flow
 
 def test_replicas_reindex(docker_compose):
     n_dim = 1
-    name = 'test_reindex22d1dshhbjklhjsksqa'
+    name = 'test_reindex'
 
     f = Flow().add(
         uses=MilvusIndexer,

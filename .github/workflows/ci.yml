@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-path: [ 'tests/unit/test_executor.py', 'tests/integration/test_flow.py', 'tests/integration/test_integration.py', 'tests/integration/test_reload.py', 'tests/integration/test_replicas.py', 'tests/integration/test_replicas_reindex.py' ]
+        test-path: [ 'tests/unit/test_executor.py', 'tests/integration/test_flow.py', 'tests/integration/test_filtering.py', 'tests/integration/test_reload_keep_state.py', 'tests/integration/test_replicas.py', 'tests/integration/test_replicas_reindex.py' ]
     runs-on: ubuntu-latest
     defaults:
       run:
