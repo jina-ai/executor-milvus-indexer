@@ -202,4 +202,4 @@ with f:
     )
 ```
 
-For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/redis/#vector-search-with-filter-query).
+For more information please refer to the docarray [documentation](https://docarray.jina.ai/advanced/document-store/milvus/#vector-search-with-filter).
