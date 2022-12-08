@@ -6,7 +6,7 @@ from jina.logging.logger import JinaLogger
 
 
 class MilvusIndexer(Executor):
-    """MilvusIndexer indexes Documents into a Milvus server using DocumentArray with `storage='milvus'`"""
+    """MilvusIndexer indexes Documents into a Milvus database using DocumentArray with `storage='milvus'`"""
 
     def __init__(
         self,
@@ -77,11 +77,7 @@ class MilvusIndexer(Executor):
             if parameters is None:
                 parameters = {}
 
-            match_args = (
-                {**self._match_args, **parameters}
-                if parameters is not None
-                else self._match_args
-            )
+            match_args = {**self._match_args, **parameters}
             docs.match(self._index, **match_args)
 
     @requests(on='/delete')
@@ -103,14 +99,11 @@ class MilvusIndexer(Executor):
         """Update existing documents
         :param docs: the Documents to update
         """
-
-        for doc in docs:
-            try:
-                self._index[doc.id] = doc
-            except IndexError:
-                self.logger.warning(
-                    f'cannot update doc {doc.id} as it does not exist in storage'
-                )
+        try:
+            ids = docs[:, 'id']
+            self._index[ids] = docs
+        except KeyError:
+            self.logger.warning('Cannot update doc as it does not exist in storage')
 
     @requests(on='/fill_embedding')
     def fill_embedding(self, docs: DocumentArray, **kwargs):
@@ -118,8 +111,10 @@ class MilvusIndexer(Executor):
 
         :param docs: DocumentArray to be filled with Embeddings from the index
         """
-        for doc in docs:
-            doc.embedding = self._index[doc.id].embedding
+        with self._index:
+            ids = docs[:, 'id']
+            embeddings = self._index[ids, 'embedding']
+            docs.embeddings = embeddings
 
     @requests(on='/filter')
     def filter(self, parameters: Dict, **kwargs):
@@ -129,7 +124,7 @@ class MilvusIndexer(Executor):
         :param parameters: parameters of the request, containing the `filter` query
         """
         with self._index:
-        return self._index.find(filter=parameters.get('filter', None))
+            return self._index.find(filter=parameters.get('filter', None))
 
     @requests(on='/clear')
     def clear(self, **kwargs):

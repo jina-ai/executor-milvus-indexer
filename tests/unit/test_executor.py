@@ -78,6 +78,25 @@ def test_update(docs, update_docs, docker_compose):
     assert indexer._index['doc1'].text == 'modified'
 
 
+def test_update_including_doc_with_unknown_id(docs, docker_compose):
+    # index docs first
+    indexer = MilvusIndexer()
+    indexer.index(docs)
+    assert_document_arrays_equal(indexer._index, docs)
+
+    # update docs
+    update_docs = DocumentArray(
+        [
+            Document(
+                id='doc_not_existing_id', text='modified', embedding=np.random.rand(128)
+            ),
+            Document(id='doc1', text='modified', embedding=np.random.rand(128)),
+        ]
+    )
+    indexer.update(update_docs)
+    assert indexer._index['doc1'].text == 'modified'
+
+
 def test_fill_embeddings(docker_compose):
     indexer = MilvusIndexer(distance='L2', n_dim=1)
 
@@ -132,10 +151,7 @@ def test_search(metric, docs, docker_compose):
 
 @pytest.mark.parametrize('limit', [1, 2, 3])
 def test_search_with_match_args(docs, limit, docker_compose):
-    indexer = MilvusIndexer(
-        distance='L2',
-        match_args={'limit': limit}
-    )
+    indexer = MilvusIndexer(distance='L2', match_args={'limit': limit})
     indexer.index(docs)
     assert 'limit' in indexer._match_args.keys()
     assert indexer._match_args['limit'] == limit
