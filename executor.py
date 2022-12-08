@@ -53,7 +53,7 @@ class MilvusIndexer(Executor):
 
     @requests(on='/index')
     def index(self, docs: DocumentArray, **kwargs):
-        """Index new documents
+        """Index new Documents
         :param docs: the Documents to index
         """
         with self._index:
@@ -68,7 +68,7 @@ class MilvusIndexer(Executor):
     ):
         """Perform a vector similarity search and retrieve the full Document match
 
-        :param docs: the Documents to search with
+        :param docs: the query Documents to search with
         :param parameters: Dictionary to define the `filter` that you want to use.
         :param kwargs: additional kwargs for the endpoint
 
@@ -128,6 +128,7 @@ class MilvusIndexer(Executor):
         specifications in the `find` method of `DocumentArray` using Redis: https://docarray.jina.ai/advanced/document-store/redis/#search-by-filter-query
         :param parameters: parameters of the request, containing the `filter` query
         """
+        with self._index:
         return self._index.find(filter=parameters.get('filter', None))
 
     @requests(on='/clear')
