@@ -1,2 +1,2 @@
-git+https://github.com/docarray/docarray.git@master[milvus]
+git+https://github.com/docarray/docarray.git@main[milvus]
 jina>=3.12.0
