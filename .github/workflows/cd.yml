@@ -3,7 +3,7 @@ name: CD
 on:
   push:
     branches:
-      - feat-add-milvus-indexer
+      - main
   release:
     types:
       - created
