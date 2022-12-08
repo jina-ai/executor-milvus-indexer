@@ -40,7 +40,9 @@ def test_replicas_reindex(docker_compose):
     with f_with_replicas:
         f_with_replicas.post(on='/index', inputs=docs_index, request_size=1)
 
-        docs_with_replicas = f_with_replicas.post(on='/search', inputs=docs_query, request_size=1)
+        docs_with_replicas = f_with_replicas.post(
+            on='/search', inputs=docs_query, request_size=1
+        )
         docs_with_replicas = sorted(
             docs_with_replicas,
             key=lambda doc: doc.id,

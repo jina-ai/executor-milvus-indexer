@@ -44,4 +44,3 @@ def test_replicas(docker_compose):
         )
 
     assert docs_without_replicas == docs_with_replicas
-

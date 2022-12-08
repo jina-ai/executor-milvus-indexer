@@ -28,6 +28,8 @@ def test_filtering(docker_compose):
         for threshold in [10, 20, 30]:
 
             doc_query = DocumentArray([Document(embedding=np.random.rand(n_dim))])
-            indexed_docs = f.search(doc_query, parameters={'filter': f'price <= {threshold}'})
+            indexed_docs = f.search(
+                doc_query, parameters={'filter': f'price <= {threshold}'}
+            )
 
             assert len(indexed_docs[0].matches) > 0
