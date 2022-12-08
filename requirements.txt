@@ -1,2 +1,2 @@
 git+https://github.com/docarray/docarray.git@fix-milvus-connections#egg=docarray[milvus]
-git+https://github.com/jina-ai/jina.git@master
+jina>=3.12.0

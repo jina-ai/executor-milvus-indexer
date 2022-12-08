@@ -2,7 +2,6 @@ from typing import Optional, Union, Dict, List, Tuple
 
 from docarray import DocumentArray
 from jina import Executor, requests
-
 from jina.logging.logger import JinaLogger
 
 

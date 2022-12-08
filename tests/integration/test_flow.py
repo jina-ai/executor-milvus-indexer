@@ -1,8 +1,6 @@
-import multiprocessing
 import numpy as np
-
-from docarray import Document, DocumentArray
-from jina import Client, Flow
+from docarray import Document
+from jina import Flow
 
 from executor import MilvusIndexer
 

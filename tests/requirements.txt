@@ -1,2 +1,3 @@
 pytest==7.1.2
 git+https://github.com/docarray/docarray.git@fix-milvus-connections
+jina>=3.12.0

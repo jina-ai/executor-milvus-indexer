@@ -1,5 +1,4 @@
 import numpy as np
-
 from docarray import Document, DocumentArray
 from jina import Flow
 

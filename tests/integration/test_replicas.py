@@ -1,7 +1,8 @@
 import numpy as np
 from docarray import Document
-from executor import MilvusIndexer
 from jina import Flow
+
+from executor import MilvusIndexer
 
 
 def test_replicas(docker_compose):

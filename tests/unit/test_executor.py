@@ -39,10 +39,10 @@ def update_docs():
 
 
 def test_init(docker_compose):
-    indexer = MilvusIndexer(collection_name='test1')
+    indexer = MilvusIndexer(collection_name='test_init')
 
     assert isinstance(indexer._index, DocumentArrayMilvus)
-    assert indexer._index._config.collection_name == 'test1'
+    assert indexer._index._config.collection_name == 'test_init'
     assert indexer._index._config.port == 19530
     assert indexer._index._config.host == 'localhost'
     assert indexer._index._config.distance == 'IP'
