@@ -1,3 +1,3 @@
 pytest==7.1.2
-git+https://github.com/docarray/docarray.git@main#egg=docarray[milvus]
+docarray[milvus]>=0.20.1
 jina>=3.12.0
