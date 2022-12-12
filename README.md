@@ -7,7 +7,7 @@
 
 
 
-`MilvusIndexer` indexes Documents into a `DocumentArray`  using `storage='us'`. Underneath, the `DocumentArray`  uses 
+`MilvusIndexer` indexes Documents into a `DocumentArray`  using `storage='milvus'`. Underneath, the `DocumentArray`  uses 
  [Milvus](https://milvus.io/) to store and search Documents efficiently. 
 The indexer relies on `DocumentArray` as a client for Milvus, you can read more about the integration here: 
 https://docarray.jina.ai/advanced/document-store/milvus/
@@ -15,7 +15,7 @@ https://docarray.jina.ai/advanced/document-store/milvus/
 
 ## Setup
 `MilvusIndexer` requires a running Milvus service. Make sure a service is up and running and your indexer 
-is configured to use it before starting to index documents. For quick testing, you can run a containerized version 
+is configured to use it before starting to index Documents. For quick testing, you can run a containerized version 
 locally using docker-compose :
 
 ```shell
@@ -29,7 +29,7 @@ able to reach the service from within the container.
 
 ## Usage
 
-#### via Docker image (recommended)
+### via Docker image (recommended)
 
 ```python
 from jina import Flow
@@ -52,7 +52,7 @@ with f:
     f.post('/index', inputs=[Document(embedding=np.random.rand(256)) for _ in range(3)])
 ```
 
-#### via source code
+### via source code
 
 ```python
 from jina import Flow
@@ -190,7 +190,7 @@ f =  Flow().add(
 - For more details about overriding configurations, please refer to [this page](https://docs.jina.ai/fundamentals/executor/executor-in-flow/#special-executor-attributes).
 - You can find more about the `match` function at [this page](https://docarray.jina.ai/api/docarray.array.mixins.match/#docarray.array.mixins.match.MatchMixin.match).
 
-### Configure the Search Behaviors on-the-fly
+### Configure the search behaviors on-the-fly
 
 **At search time**, you can also pass arguments to config the `match` function. This can be useful when users want to query with different arguments for different data requests. For instance, the following codes query with a custom `limit` in `parameters` and only retrieve the top 100 nearest neighbors. This will override existing `match_args` if defined during Executor initialization.
 
