@@ -9,8 +9,7 @@
 
 `MilvusIndexer` indexes Documents into a `DocumentArray`  using `storage='milvus'`. Underneath, the `DocumentArray`  uses 
  [Milvus](https://milvus.io/) to store and search Documents efficiently. 
-The indexer relies on `DocumentArray` as a client for Milvus, you can read more about the integration here: 
-https://docarray.jina.ai/advanced/document-store/milvus/
+The indexer relies on `DocumentArray` as a client for Milvus, you can read more about the integration [here](https://docarray.jina.ai/advanced/document-store/milvus/).
 
 
 ## Setup
