@@ -1,0 +1,2 @@
+docarray[milvus]>=0.20.1
+jina>=3.12.0
